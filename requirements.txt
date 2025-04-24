@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+cryptography
+pycryptodome
+transformers
+openai
+python-dotenv
+mangum
