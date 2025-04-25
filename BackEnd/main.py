@@ -4,15 +4,15 @@ from pydantic import BaseModel
 from typing import Optional
 from dotenv import load_dotenv
 from Algorithms import Caesar, ColumnarTrans, DiffeHellman, ElGamal, HillCipher,OneTimePad, RSA, Vigenere
-from AI_Logic import TextGenerator, ImageGenerator
+from AI_Logic.TextGenerator import TextGenerator
+from AI_Logic.ImageGenerator import ImageGenerator
 
 load_dotenv()
 
 app = FastAPI()
 
 origins = ["*"]
-
-app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["*"], allow_header = ["*"])
+app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["*"], allow_headers=["*"])
 
 
 class CryptoRequest(BaseModel):
@@ -38,7 +38,7 @@ def process_crypto(request: CryptoRequest):
             'rsa': RSA,
             'vigenere': Vigenere
         }[algorithm]
-        
+
         if operation == 'encrypt':
             result, steps = module.encrypt(request.inputText, request.key, request.additionalKey)
         elif operation == 'decrypt':
@@ -46,7 +46,8 @@ def process_crypto(request: CryptoRequest):
         else:
             raise HTTPException(status_code=404, detail="Invalid operation")
 
-        explaination = TextGenerator(algorithm, request.inputText, request.key)
+
+        explaination = TextGenerator(algorithm, request.inputText, request.key, operation, request.additionalKey)
 
         try:
             image_url = ImageGenerator(explaination)

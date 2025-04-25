@@ -10,7 +10,7 @@ def encrypt(text, key, _=None):
     for char in text:
         if char.isalpha():
             base = ord('A') if char.isupper() else ord('a')
-            new_char = char((ord(char) - base + shift) % 26 + base)
+            new_char = chr((ord(char) - base + shift) % 26 + base)
             result += new_char
             steps.append(f"{char} -> {new_char} (shift + {shift})")
         else:
@@ -31,7 +31,7 @@ def decrypt(text, key, _=None):
     for char in text:
         if char.isalpha():
             base = ord('A') if char.isupper() else ord('a')
-            new_char = char((ord(char) - base - shift) % 26 + base)
+            new_char = chr((ord(char) - base - shift) % 26 + base)
             result += new_char
             steps.append(f"{char} -> {new_char} (shift - {shift})")
         else:

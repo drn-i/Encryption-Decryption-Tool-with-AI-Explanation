@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crypto Playground</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Cryptography Tool</h1>
+    <form id="crypto-form">
+      <label for="algorithm">Algorithm:</label>
+      <select id="algorithm">
+        <option value="caesar">Caesar</option>
+        <option value="hill">Hill Cipher</option>
+        <option value="vigenere">Vigenere</option>
+        <option value="otp">One-Time Pad</option>
+        <option value="columnar">Columnar Transposition</option>
+        <option value="rsa">RSA</option>
+        <option value="diffie-hellman">Diffie-Hellman</option>
+        <option value="elgamal">ElGamal</option>
+      </select>
+
+      <label for="operation">Operation:</label>
+      <select id="operation">
+        <option value="encrypt">Encrypt</option>
+        <option value="decrypt">Decrypt</option>
+      </select>
+
+      <label for="input_text">Input Text:</label>
+      <textarea id="input_text" required></textarea>
+
+      <label for="key" id="key-label">Key (your private key):</label>
+      <input type="text" id="key" required>
+
+      <label for="additional_key" id="additional-key-label">Prime numbers (p,q) or (p,g) for RSA / ElGamal / Diffie-Hellman (comma-separated):</label>
+      <input type="text" id="additional_key">
+
+      <button type="submit">Submit</button>
+    </form>
+
+    <div id="output"></div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
