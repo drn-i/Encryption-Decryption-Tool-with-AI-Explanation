@@ -1,6 +1,6 @@
 body {
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
+  font-family: 'Segoe UI', sans-serif;
+  background: #D4C9BE;
   margin: 0;
   padding: 0;
 }
@@ -8,7 +8,7 @@ body {
 .container {
   max-width: 700px;
   margin: auto;
-  background: white;
+  background: #F1EFEC;
   padding: 20px;
   border-radius: 8px;
   margin-top: 40px;
@@ -46,3 +46,28 @@ button:hover {
   margin-top: 20px;
   white-space: pre-wrap;
 }
+
+#additional-key-container {
+  display: none;
+}
+.card {
+  border-radius: 1rem;
+}
+
+#outputContainer {
+  transition: all 0.3s ease-in-out;
+}
+#loading {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+}
+
+#loading .spinner-border {
+  width: 3rem;
+  height: 3rem;
+  border-width: 0.3em;
+}
+

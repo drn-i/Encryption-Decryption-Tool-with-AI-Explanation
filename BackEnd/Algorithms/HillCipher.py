@@ -1,13 +1,20 @@
 import numpy as np
 
+
 def create_matrix(key):
-    if len(key) != 4:
-        raise ValueError("Key must be 4 characters for a 2x2 Hill matrix.")
-    key_nums = [ord(k.upper()) - ord('A') for k in key]
-    return np.array(key_nums).reshape(2, 2)
+    # Remove the square brackets and spaces, then split by commas
+    key = key.strip("[]").replace(" ", "")
+    key_list = list(map(int, key.split(",")))
+
+    if len(key_list) != 4:
+        raise ValueError("Key must be a list of 4 integers for a 2x2 Hill matrix.")
+
+    return np.array(key_list).reshape(2, 2)
+
 
 def mod26(matrix):
     return np.round(matrix).astype(int) % 26
+
 
 def encrypt(text, key, _=None):
     matrix = create_matrix(key)
@@ -18,15 +25,17 @@ def encrypt(text, key, _=None):
     steps = []
     result = ''
     for i in range(0, len(text), 2):
-        pair = text[i:i+2].upper()
-        vector = np.array([[ord(pair[0]) - 65], [ord(pair[1]) - 65]])
-        transformed = np.dot(matrix, vector)
+        pair = text[i:i + 2].upper()
+        vector = np.array([[ord(pair[0]) - 65], [ord(pair[1]) - 65]])  # plaintext vector
+        # Now using p * K instead of K * p
+        transformed = np.dot(vector.T, matrix)  # Transpose the vector for p * K
         encrypted = mod26(transformed)
         encrypted_text = ''.join([chr(int(n) + 65) for n in encrypted.flatten()])
         result += encrypted_text
         steps.append(f'{pair} -> {encrypted_text} using matrix {matrix.tolist()}')
 
     return result, steps
+
 
 def decrypt(text, key, _=None):
     matrix = create_matrix(key)
@@ -42,9 +51,10 @@ def decrypt(text, key, _=None):
     steps = []
     result = ''
     for i in range(0, len(text), 2):
-        pair = text[i:i+2].upper()
-        vector = np.array([[ord(pair[0]) - 65], [ord(pair[1]) - 65]])
-        decrypted = np.dot(adjugate, vector)
+        pair = text[i:i + 2].upper()
+        vector = np.array([[ord(pair[0]) - 65], [ord(pair[1]) - 65]])  # ciphertext vector
+        # Decrypting using the inverse matrix
+        decrypted = np.dot(vector.T, adjugate)  # Transpose the vector for p * K
         plain = mod26(decrypted)
         plain_text = ''.join([chr(int(n) + 65) for n in plain.flatten()])
         result += plain_text

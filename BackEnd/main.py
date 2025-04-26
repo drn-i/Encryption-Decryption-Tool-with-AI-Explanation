@@ -5,7 +5,6 @@ from typing import Optional
 from dotenv import load_dotenv
 from Algorithms import Caesar, ColumnarTrans, DiffeHellman, ElGamal, HillCipher,OneTimePad, RSA, Vigenere
 from AI_Logic.TextGenerator import TextGenerator
-from AI_Logic.ImageGenerator import ImageGenerator
 
 load_dotenv()
 
@@ -47,14 +46,9 @@ def process_crypto(request: CryptoRequest):
             raise HTTPException(status_code=404, detail="Invalid operation")
 
 
-        explaination = TextGenerator(algorithm, request.inputText, request.key, operation, request.additionalKey)
+        explanation = TextGenerator(algorithm, request.inputText, request.key, operation, request.additionalKey)
 
-        try:
-            image_url = ImageGenerator(explaination)
-        except Exception:
-            image_url = None
-
-        return {"result": result, "steps": steps,"explaination": explaination ,"image_url": image_url}
+        return {"result": result, "steps": steps,"explanation": explanation}
 
     except Exception as e:
         raise HTTPException(status_code=404, detail=str(e))

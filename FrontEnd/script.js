@@ -1,67 +1,72 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("cryptoForm");
   const algorithmSelect = document.getElementById("algorithm");
-  const keyField = document.getElementById("key");
-  const keyLabel = document.getElementById("key-label");
-  const additionalKeyField = document.getElementById("additional_key");
-  const additionalKeyLabel = document.getElementById("additional-key-label");
+  const additionalKeyContainer = document.getElementById("additionalKeyContainer");
 
-  const specialAlgos = ["rsa", "elgamal", "diffie-hellman"];
-  const keyRequiredAlgos = ["caesar", "vigenere", "hill", "otp", "columnar", "rsa", "diffie-hellman", "elgamal", "aes"];
+  const resultField = document.getElementById("result");
+  const explanationField = document.getElementById("explanation");
+  const stepsList = document.getElementById("steps");
+  const outputContainer = document.getElementById("outputContainer");
+  const loading = document.getElementById("loading"); // 🛠️ get the loading div
 
-  function updateFieldVisibility() {
-    const selectedAlgo = algorithmSelect.value.toLowerCase();
-    const showAdditional = specialAlgos.includes(selectedAlgo);
-    const showKey = keyRequiredAlgos.includes(selectedAlgo);
+  // Show/hide additional key for specific algorithms
+  algorithmSelect.addEventListener("change", () => {
+    const algo = algorithmSelect.value.toLowerCase();
+    if (["rsa", "elgamal", "diffehellman"].includes(algo)) {
+      additionalKeyContainer.style.display = "block";
+    } else {
+      additionalKeyContainer.style.display = "none";
+    }
+  });
 
-    keyLabel.style.display = showKey ? "block" : "none";
-    keyField.style.display = showKey ? "block" : "none";
-    keyField.required = showKey;
-
-    additionalKeyLabel.style.display = showAdditional ? "block" : "none";
-    additionalKeyField.style.display = showAdditional ? "block" : "none";
-  }
-
-  updateFieldVisibility();
-  algorithmSelect.addEventListener("change", updateFieldVisibility);
-
-  document.getElementById("crypto-form").addEventListener("submit", async function (e) {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const algorithm = document.getElementById("algorithm").value;
+    const algorithm = algorithmSelect.value;
     const operation = document.getElementById("operation").value;
-    const input_text = document.getElementById("input_text").value;
+    const inputText = document.getElementById("inputText").value;
     const key = document.getElementById("key").value;
-    const additional_key = document.getElementById("additional_key").value;
+    const additionalKey = document.getElementById("additionalKey").value;
 
-    const data = {
+    const payload = {
       algorithm,
       operation,
-      inputText: input_text,
+      inputText,
       key,
       additionalKey: additionalKey || null
     };
 
     try {
-      const response = await fetch("http://localhost:9000/crypto", {
+      loading.style.display = "block"; // 🛠️ show loading
+
+      const res = await fetch("http://localhost:9090/crypto", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+        body: JSON.stringify(payload)
       });
 
-      const result = await response.json();
+      const data = await res.json();
 
-      if (response.ok) {
-        document.getElementById("output").innerHTML = `
-          <strong>Result:</strong> ${result.result}<br><br>
-          <strong>Steps:</strong><br>${result.steps.join('<br>')}<br><br>
-          <strong>Explanation:</strong><br>${result.explanation}<br><br>
-          ${result.image_url ? `<img src="${result.image_url}" alt="AI Explanation" width="300" />` : "<em>No image generated.</em>"}
-        `;
-      } else {
-        document.getElementById("output").textContent = result.detail;
+      if (!res.ok) {
+        throw new Error(data.detail || "Something went wrong");
       }
-    } catch (error) {
-      document.getElementById("output").textContent = "An error occurred. Please try again.";
+
+      resultField.textContent = data.result;
+      explanationField.textContent = data.explanation;
+
+      stepsList.innerHTML = "";
+      data.steps.forEach((step, idx) => {
+        const li = document.createElement("li");
+        li.className = "list-group-item";
+        li.textContent = step;
+        stepsList.appendChild(li);
+      });
+
+      outputContainer.style.display = "block";
+    } catch (err) {
+      alert("Error: " + err.message);
+    } finally {
+      loading.style.display = "none"; // 🛠️ hide loading whether success or error
     }
   });
 });

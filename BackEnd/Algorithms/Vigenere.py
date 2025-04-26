@@ -1,5 +1,5 @@
 def repeat_key(key, length):
-    return (key * (length // ken(key))) + key[:length % len(key)]
+    return (key * (length // len(key))) + key[:length % len(key)]
 
 def encrypt(text, key, _=None):
     key = repeat_key(key, len(text))
