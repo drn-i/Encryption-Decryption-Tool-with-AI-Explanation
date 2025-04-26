@@ -25,9 +25,11 @@ def decrypt(text, key, _=None):
 
     cols = [''] * key_len
     start = 0
+    steps = []  # initialize once
+
     for idx, _ in col_order:
         cols[idx] = text[start:start+col_height]
-        steps = [f"Column {idx+1}: {cols[idx]}"]
+        steps.append(f"Column {idx+1}: {cols[idx]}")  # append, not overwrite
         start += col_height
 
     result = ""
@@ -36,3 +38,4 @@ def decrypt(text, key, _=None):
             result += cols[j][i]
 
     return result, steps
+
